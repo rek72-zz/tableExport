@@ -1387,13 +1387,14 @@
                 if (cell !== null) {
                     var $cell = $(cell);
                     var htmlData;
+                    var hasOverrideValue = $cell[0].hasAttribute("data-tableexport-value");
 
-                    if ($cell[0].hasAttribute("data-tableexport-value"))
+                    if (hasOverrideValue)
                         htmlData = $cell.data("tableexportValue");
                     else
                         htmlData = $cell.html();
 
-                    if (htmlData != '') {
+                    if (!hasOverrideValue && htmlData != '') {
                         var html = $.parseHTML( htmlData );
 
                         htmlData = '';
