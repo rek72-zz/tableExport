@@ -11,6 +11,7 @@
     $.fn.extend({
         tableExport: function (options) {
             var defaults = {
+                test: 'asdf',
                 consoleLog: false,
                 csvEnclosure: '"',
                 csvSeparator: ',',
@@ -67,7 +68,8 @@
                 theadSelector: 'tr',
                 tableName: 'myTableName',
                 type: 'csv', // 'csv', 'txt', 'sql', 'json', 'xml', 'excel', 'doc', 'png' or 'pdf'
-                worksheetName: 'xlsWorksheetName'
+                worksheetName: 'xlsWorksheetName',
+                postCallback: function(){}
             };
 
             var FONT_ROW_RATIO = 1.15;
@@ -140,6 +142,7 @@
                 try {
                     blob = new Blob([csvData], {type: "text/" + (defaults.type == 'csv' ? 'csv' : 'plain') + ";charset=utf-8"});
                     saveAs(blob, defaults.fileName + '.' + defaults.type, (defaults.type != 'csv' || defaults.csvUseBOM === false));
+                    defaults.postCallback();
                 }
                 catch (e) {
                     downloadFile(defaults.fileName + '.' + defaults.type,
@@ -199,6 +202,7 @@
                 try {
                     blob = new Blob([tdData], {type: "text/plain;charset=utf-8"});
                     saveAs(blob, defaults.fileName + '.sql');
+                    defaults.postCallback();
                 }
                 catch (e) {
                     downloadFile(defaults.fileName + '.sql',
@@ -266,6 +270,7 @@
                 try {
                     blob = new Blob([sdata], {type: "application/json;charset=utf-8"});
                     saveAs(blob, defaults.fileName + '.json');
+                    defaults.postCallback();
                 }
                 catch (e) {
                     downloadFile(defaults.fileName + '.json',
@@ -328,6 +333,7 @@
                 try {
                     blob = new Blob([xml], {type: "application/xml;charset=utf-8"});
                     saveAs(blob, defaults.fileName + '.xml');
+                    defaults.postCallback();
                 }
                 catch (e) {
                     downloadFile(defaults.fileName + '.xml',
@@ -484,6 +490,7 @@
                 try {
                     blob = new Blob([docFile], {type: 'application/vnd.ms-' + defaults.type});
                     saveAs(blob, defaults.fileName + '.' + MSDocExt);
+                    defaults.postCallback();
                 }
                 catch (e) {
                     downloadFile(defaults.fileName + '.' + MSDocExt,
@@ -557,6 +564,7 @@
                 try {
                     blob = new Blob([jx_s2ab(wbout)], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8'});
                     saveAs(blob, defaults.fileName + '.' + defaults.type);
+                    defaults.postCallback();
                 }
                 catch (e) {
                     downloadFile(defaults.fileName + '.' + defaults.type,
@@ -595,6 +603,7 @@
                         try {
                             blob = new Blob([buffer], {type: "image/png"});
                             saveAs(blob, defaults.fileName + '.png');
+                            defaults.postCallback();
                         }
                         catch (e) {
                             downloadFile(defaults.fileName + '.png',
@@ -668,6 +677,7 @@
                         try {
                             var blob = new Blob([buffer], {type: "application/pdf"});
                             saveAs(blob, defaults.fileName + '.pdf');
+                            defaults.postCallback();
                         }
                         catch (e) {
                             downloadFile(defaults.fileName + '.pdf',
@@ -1170,6 +1180,7 @@
                 try {
                     var blob = doc.output('blob');
                     saveAs(blob, defaults.fileName + '.pdf');
+                    defaults.postCallback();
                 }
                 catch (e) {
                     downloadFile(defaults.fileName + '.pdf',
@@ -1615,12 +1626,11 @@
             }
 
             function downloadFile(filename, header, data) {
-
                 var ua = window.navigator.userAgent;
                 if (filename !== false && (ua.indexOf("MSIE ") > 0 || !!ua.match(/Trident.*rv\:11\./))) {
-                    if (window.navigator.msSaveOrOpenBlob)
+                    if (window.navigator.msSaveOrOpenBlob) {
                         window.navigator.msSaveOrOpenBlob(new Blob([data]), filename);
-                    else {
+                    } else {
                         // Internet Explorer (<= 9) workaround by Darryl (https://github.com/dawiong/tableExport.jquery.plugin)
                         // based on sampopes answer on http://stackoverflow.com/questions/22317951
                         // ! Not working for json and pdf format !
@@ -1636,10 +1646,10 @@
 
                             frame.contentDocument.execCommand("SaveAs", true, filename);
                             document.body.removeChild(frame);
+                            defaults.postCallback();
                         }
                     }
-                }
-                else {
+                } else {
                     var DownloadLink = document.createElement('a');
 
                     if (DownloadLink) {
@@ -1671,6 +1681,8 @@
                         document.body.removeChild(DownloadLink);
                     }
                 }
+
+                defaults.postCallback();
             }
 
             function utf8Encode(string) {
