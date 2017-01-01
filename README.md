@@ -181,7 +181,7 @@ To export in XSLX format [protobi/js-xlsx](https://github.com/protobi/js-xlsx) f
 
 Optional html data attributes
 =============================
-(can be set while generating the table you want to export)
+Attributes can be set while generating the table you want to export. Data can also be set by jQuery.data() using the data object rather than the HTML data attribute.
 
 <h3>data-tableexport-display</h3>
 ```html
