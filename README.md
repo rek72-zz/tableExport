@@ -1,5 +1,6 @@
 tableExport.jquery.plugin
 =========================
+This has been cloned from https://github.com/hhurz/tableExport.jquery.plugin 
 
 <h3>Export HTML Table to</h3>
 <ul>
@@ -59,6 +60,16 @@ Examples
 $('#tableID').tableExport({type:'csv'});
 ```
 
+
+```javascript
+$('#tableID').tableExport({
+    type:'csv',
+    postCallback: function(){
+            console.log('done loading my humugoid file')
+    }
+});
+```
+
 ```javascript
 $('#tableID').tableExport({type:'pdf',
                            jspdf: {orientation: 'p',
@@ -110,6 +121,7 @@ htmlContent: false
 ignoreColumn: []
 ignoreRow: []
 jsonScope: 'all'
+postCallback: function() {/* callback function called after files are generated and saved */},
 jspdf: orientation: 'p'
        unit:'pt'
        format: 'a4'
